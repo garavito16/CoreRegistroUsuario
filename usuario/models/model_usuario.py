@@ -2,6 +2,7 @@
 from usuario.config.mysqlconnection import connectToMySQL
 from flask import flash
 import re
+from datetime import datetime,date
 
 NAMES_REGEX = re.compile(r'^[A-Z][a-zA-Z ]{1,80}$')
 SEXO_REGEX = re.compile(r'^[M|F|O]{1}$')
@@ -97,6 +98,19 @@ class User:
         if not FECHA_REGEX.match(user["fecha_nacimiento"]):
             flash("Invalid date of birth","register")
             is_valid = False
+        else:
+            dob = datetime.strptime(user["fecha_nacimiento"], '%Y-%m-%d')
+            today = datetime.now()
+            age = today.year - dob.year
+            if ( today.month == dob.month == 2 and
+                today.day == 28 and dob.day == 29 ):
+                pass
+            elif today.month < dob.month or \
+            (today.month == dob.month and today.day < dob.day):
+                age -= 1
+            if(age < 10):
+                flash("Must be at least 10 years old","register")
+                is_valid = False
         if not SELECT_REGEX.match(user["estado_civil"]):
             flash("You must select the civil status","register")
             is_valid = False

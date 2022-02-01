@@ -1,4 +1,4 @@
-from this import d
+
 from flask import render_template,redirect, request,session,flash
 from usuario import app
 from usuario.models.model_pais import Country
